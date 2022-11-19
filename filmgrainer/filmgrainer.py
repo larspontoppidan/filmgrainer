@@ -67,6 +67,9 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
     mask_pixels = mask.load()
     img_pixels = img.load()
 
+    # Instead of calling map.lookup(a, b) for each pixel, use the map directly:
+    lookup = map.map
+
     if gray_scale:
         print("Film graining image ... (grayscale)")
         for y in range(0, img_height):
@@ -74,7 +77,8 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
                 m = mask_pixels[x, y]
                 (r, g, b) = img_pixels[x, y]
                 gray = int(0.21*r + 0.72*g + 0.07*b)
-                gray_lookup = map.lookup(gray, m)
+                #gray_lookup = map.lookup(gray, m)
+                gray_lookup = lookup[gray, m]
                 img_pixels[x, y] = (gray_lookup, gray_lookup, gray_lookup)
     else:
         print("Film graining image ...")
@@ -82,9 +86,12 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
             for x in range(0, img_width):
                 m = mask_pixels[x, y]
                 (r, g, b) = img_pixels[x, y]
-                r = map.lookup(r, m)
-                g = map.lookup(g, m)
-                b = map.lookup(b, m)
+                # r = map.lookup(r, m)
+                # g = map.lookup(g, m)
+                # b = map.lookup(b, m)
+                r = lookup[r, m]
+                g = lookup[g, m]
+                b = lookup[b, m]
                 img_pixels[x, y] = (r, g, b)
             
     if post_scale != 1.0:
