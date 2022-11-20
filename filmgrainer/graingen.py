@@ -50,12 +50,13 @@ def grainGen(width, height, grain_size, power, saturation, seed = 1):
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) == 6:
-        out_file = sys.argv[1]
+    if len(sys.argv) == 8:
         width = int(sys.argv[2])
         height = int(sys.argv[3])
         grain_size = float(sys.argv[4])
         power = float(sys.argv[5])
-        out = grainGen(width, height, grain_size, 0.0, power)
+        sat = float(sys.argv[6])
+        seed = int(sys.argv[7])
+        out = grainGen(width, height, grain_size, power, sat, seed)
         out.save(sys.argv[1])
 
