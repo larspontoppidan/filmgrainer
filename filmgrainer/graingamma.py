@@ -12,9 +12,10 @@ def _gammaCurve(gamma, x):
 
 def _calcDevelopment(shadow_level, high_level, x):
     """
-    This function returns a development like this:
+This function returns a development like this:
 
-    ^
+ (return)
+    ^  
     |
 0.5 |                 o   -   o                  <-- mids level, always 0.5
     |             -               -     
@@ -23,10 +24,9 @@ def _calcDevelopment(shadow_level, high_level, x):
     |    -                                       
     | o                                          <-- shadow_level eg. 0.15
     |   
- 0 -+-----------------|-------|------------|----->
-    | 0              160     200          256
+ 0 -+-----------------|-------|------------|----->  x  (input)
+    0                160     200          255
     """
-
     if x < _ShadowEnd:
         power = 0.5 - (_ShadowEnd - x) * (0.5 - shadow_level) / _ShadowEnd
     elif x < _HighlightStart:
@@ -55,7 +55,7 @@ class Map:
             # Gamma compensate picture source value itself
             pic_value = _gammaCurve(src_gamma, src_value) * 255.0
 
-            # In the shadows we want gamma to be 0.5, in the highs, 2.0:
+            # In the shadows we want noise gamma to be 0.5, in the highs, 2.0:
             gamma = pic_value * (1.5 / 256) + 0.5
             gamma_offset = _gammaCurve(gamma, 128)
             

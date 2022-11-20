@@ -6,6 +6,7 @@ class Args:
     def __init__(self):
         self.gray_scale = False
         self.grain_type = 1
+        self.grain_sat = 0.5        
         self.grain_power = 0.5
         self.shadows = 0.3
         self.highs = 0.3
@@ -27,6 +28,9 @@ class Args:
             elif args[0] == "--type":
                 args.pop(0)
                 a.grain_type = int(args[0])
+            elif args[0] == "--sat":
+                args.pop(0)
+                a.grain_sat = float(args[0])
             elif args[0] == "-o":
                 args.pop(0)
                 a.file_out = args[0]
@@ -61,9 +65,10 @@ def usage():
 
 Options:
   --gamma <gamma>                          Gamma compensate input, default: 1.0
-  --gray                                   Convert to grayscale
-  --type <type>                            Specify grain type: (default: 3)
+  --gray                                   Grayscale mode
+  --type <type>                            Grain type: (default: 3)
                                            1: smooth fine, 2: fine, 3: coarse, 4: coarser
+  --sat <saturation>                       Grain color saturation
   --power <overall>,<highlights>,<shadows> Grain power: overall, for highlights and for shadows
   --scale <ratio>                          Scaling, default 1.0. This will scale the image before
                                            applying grain and scale back to normal size afterwards.
@@ -76,10 +81,13 @@ Example, for a coarse black and white look:
   filmgrainer --gray --type 3 --power 0.8,0.2,0.1 -o output.jpg input.jpg
 
 Example, for a heavily grained color negative look:
-  filmgrainer --type 3 --power 0.8,0.2,0.1 -o output.jpg input.jpg   
+  filmgrainer --type 4 --sat 1 --power 1,0.2,0.3 -o output.jpg input.jpg   
 
 Example, for a finely grained color negative look:
-  filmgrainer --type 3 --power 0.8,0.2,0.1 -o output.jpg input.jpg   
+  filmgrainer --type 3 --sat 1 --power 0.8,0.2,0.1 -o output.jpg input.jpg   
+
+Example, for a finely grained dias-film look:
+  filmgrainer --type 1 --sat 0.8 --power 0.6,0.1,0.1 -o output.jpg input.jpg
 """)
 
 def main():
@@ -91,7 +99,7 @@ def main():
     else:
         filmgrainer.process(args.file_in, args.scale, args.src_gamma, 
             args.grain_power, args.shadows, args.highs, args.grain_type, 
-            args.gray_scale, args.sharpen, args.seed, args.file_out)
+            args.grain_sat, args.gray_scale, args.sharpen, args.seed, args.file_out)
 
 if __name__ == "__main__":
     main()

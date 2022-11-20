@@ -1,34 +1,45 @@
 from PIL import Image
 import random
-from filmgrainer.imgbuffers import GrayBuffer
+import numpy as np
 
-_GaussPower = 60 
-
-def _makeNoise(width, height, power):
-    buffer = GrayBuffer.fromZeros(width, height)
+def _makeGrayNoise(width, height, power):
+    buffer = np.zeros([height, width], dtype=int)
 
     for y in range(0, height):
         for x in range(0, width):
-            rn = random.gauss(128, power)
-            if rn < 0:
-                i = 0
-            elif rn > 255:
-                i = 255
-            else:
-                i = int(rn)
-            buffer.setGray(x, y, i)
-    return buffer
+            buffer[y, x] = random.gauss(128, power)
+    buffer = buffer.clip(0, 255)
+    return Image.fromarray(buffer.astype(dtype=np.uint8))
+
+def _makeRgbNoise(width, height, power, saturation):
+    buffer = np.zeros([height, width, 3], dtype=int)
+    intens_power = power * (1.0 - saturation)
+    for y in range(0, height):
+        for x in range(0, width):
+            intens = random.gauss(128, intens_power)
+            buffer[y, x, 0] = random.gauss(0, power) * saturation + intens
+            buffer[y, x, 1] = random.gauss(0, power) * saturation + intens
+            buffer[y, x, 2] = random.gauss(0, power) * saturation + intens
+
+    buffer = buffer.clip(0, 255)
+    return Image.fromarray(buffer.astype(dtype=np.uint8))
 
 
-def grainGen(width, height, grain_size, power, seed = 1):
+def grainGen(width, height, grain_size, power, saturation, seed = 1):
     # A grain_size of 1 means the noise buffer will be made 1:1
     # A grain_size of 2 means the noise buffer will be resampled 1:2
     noise_width = int(width / grain_size)
     noise_height = int(height / grain_size)
-    print("Making gaussian noise buffer, width: %d, height: %d, grain-size: %s, seed: %d" % (noise_width, noise_height, str(grain_size), seed))
     random.seed(seed)
-    buffer = _makeNoise(noise_width, noise_height, power)
-    img = buffer.toImg()
+
+    if saturation < 0.0:
+        print("Making B/W grain buffer, width: %d, height: %d, grain-size: %s, seed: %d" % (
+            noise_width, noise_height, str(grain_size), seed))
+        img = _makeGrayNoise(noise_width, noise_height, power)
+    else:
+        print("Making RGB grain buffer, width: %d, height: %d, saturation: %s, grain-size: %s, seed: %d" % (
+            noise_width, noise_height, str(saturation), str(grain_size), seed))
+        img = _makeRgbNoise(noise_width, noise_height, power, saturation)
 
     # Resample
     if grain_size != 1.0:
@@ -45,6 +56,6 @@ if __name__ == "__main__":
         height = int(sys.argv[3])
         grain_size = float(sys.argv[4])
         power = float(sys.argv[5])
-        out = grainGen(width, height, grain_size, power)
+        out = grainGen(width, height, grain_size, 0.0, power)
         out.save(sys.argv[1])
 
