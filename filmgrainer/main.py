@@ -2,6 +2,9 @@
 import sys
 import filmgrainer.filmgrainer as filmgrainer
 
+from filmgrainer import __version__
+github = "https://github.com/larspontoppidan/filmgrainer"
+
 class Arguments:
     def __init__(self):
         self.gray_scale = False
@@ -20,8 +23,10 @@ class Arguments:
     @staticmethod
     def parse(args):
         a = Arguments()
-        while len(args) > 1:
-            if args[0] == "--gray":
+        while len(args) > 0:
+            if len(args) == 1 and not args[0].startswith('-'):
+                a.file_in = args[0]
+            elif args[0] == "--gray":
                 a.gray_scale = True
             elif args[0] == "--gamma":
                 args.pop(0)
@@ -50,22 +55,26 @@ class Arguments:
                 a.grain_power = float(sp[0])
                 a.highs = float(sp[1])
                 a.shadows = float(sp[2])
+            elif args[0] == "--version":
+                version()
+                sys.exit()
             elif args[0] == "-h":
                 usage()
-                sys.exit(-1)
+                sys.exit()
             else:
                 raise Exception("Unknown option: " + args[0])
             args.pop(0)
-        a.file_in = args[0]
         return a
+
+def version():
+    print("filmgrainer v%s, see more: %s" % (__version__, github))
 
 def usage():
     print("""Usage:
-
-  filmgrainer [OPTION] [OPTION] ... <input-filename>
+  filmgrainer [OPTION] [OPTION] ... INPUTFILE
 
 Options:
--------
+--------
   --gamma <gamma>                          Gamma compensate input, default: 1.0
   --gray                                   Grayscale mode
   --type <type>                            Grain type:
@@ -73,12 +82,13 @@ Options:
   --sat <saturation>                       Grain color saturation, 0.0 to 1.0
   --power <overall>,<highlights>,<shadows> Grain power: overall, highlights, shadows
   --scale <ratio>                          Scaling, default 1.0. This will scale the image before
-                                           applying grain and scale back to normal size afterwards
-                                           for an increase in grain size
-  --sharpen <passes>                       Sharpen output passes, default: 0
+                                           applying grain and scale back to original size 
+                                           afterwards for an increase in grain size.
+  --sharpen <passes>                       Sharpen output, passes, default: 0
   --seed <number>                          Seed for grain random generator
   -o <output-filename>                     Set output filename
   -h                                       Show this help
+  --version                                Show version
 
 Examples:
 ---------
@@ -101,9 +111,16 @@ Totally trashing a picture with grain:
 
 def main():
     try:
+        if len(sys.argv) == 1:
+            version()
+            print("")
+            usage()
+            return
         args = Arguments.parse(sys.argv[1:])
+        if args.file_in is None:
+            raise ValueError("No input file specified")
     except Exception as e:
-        usage()
+        print("Error: %s" % str(e))
         sys.exit(-1)
     else:
         if args.file_out is None:
@@ -115,4 +132,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
