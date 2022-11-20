@@ -52,12 +52,9 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
     org_width = img.size[0]
     org_height = img.size[1]
     
-    pre_scale = 1.0 / scale
-    post_scale = scale
-
-    if pre_scale != 1.0:
-        print("Rescaling source image ...")
-        img = img.resize((int(org_width * pre_scale), int(org_height * pre_scale)),
+    if scale != 1.0:
+        print("Scaling source image ...")
+        img = img.resize((int(org_width / scale), int(org_height / scale)),
                           resample = Image.LANCZOS)
     
     img_width = img.size[0]
@@ -99,10 +96,9 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
                 b = lookup[b, mb]
                 img_pixels[x, y] = (r, g, b)
     
-    if post_scale != 1.0:
-        print("Scaling image ...")
-        img = img.resize((int(img_width * post_scale), int(img_height * post_scale)),
-                          resample = Image.LANCZOS)
+    if scale != 1.0:
+        print("Scaling image back to original size ...")
+        img = img.resize((org_width, org_height), resample = Image.LANCZOS)
     
     if sharpen > 0:
         print("Sharpening image: %d pass ..." % sharpen)
