@@ -66,7 +66,7 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
 
     print("Calculating map ...")
     map = graingamma.Map.calculate(src_gamma, grain_power, shadows, highs)
-    map.saveToFile("map.png")
+    # map.saveToFile("map.png")
 
     print("Calculating grain stock ...")
     (grain_size, grain_gauss) = _grainTypes(grain_type)
