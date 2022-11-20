@@ -48,7 +48,7 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
             highs:float, grain_type:int, grain_sat:float, gray_scale:bool, sharpen:int, seed:int, file_out=None):
             
     print("Loading: " + file_in)
-    img = Image.open(file_in)
+    img = Image.open(file_in).convert("RGB")
     org_width = img.size[0]
     org_height = img.size[1]
     
