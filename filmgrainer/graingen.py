@@ -33,11 +33,11 @@ def grainGen(width, height, grain_size, power, saturation, seed = 1):
     random.seed(seed)
 
     if saturation < 0.0:
-        print("Making B/W grain buffer, width: %d, height: %d, grain-size: %s, seed: %d" % (
+        print("Making B/W grain, width: %d, height: %d, grain-size: %s, seed: %d" % (
             noise_width, noise_height, str(grain_size), seed))
         img = _makeGrayNoise(noise_width, noise_height, power)
     else:
-        print("Making RGB grain buffer, width: %d, height: %d, saturation: %s, grain-size: %s, seed: %d" % (
+        print("Making RGB grain, width: %d, height: %d, saturation: %s, grain-size: %s, seed: %d" % (
             noise_width, noise_height, str(saturation), str(grain_size), seed))
         img = _makeRgbNoise(noise_width, noise_height, power, saturation)
 

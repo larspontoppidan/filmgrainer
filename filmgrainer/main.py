@@ -2,14 +2,14 @@
 import sys
 import filmgrainer.filmgrainer as filmgrainer
 
-class Args:
+class Arguments:
     def __init__(self):
         self.gray_scale = False
         self.grain_type = 1
         self.grain_sat = 0.5        
-        self.grain_power = 0.5
-        self.shadows = 0.3
-        self.highs = 0.3
+        self.grain_power = 0.7
+        self.shadows = 0.2
+        self.highs = 0.2
         self.scale = 1.0
         self.sharpen = 0
         self.src_gamma = 1.0
@@ -18,7 +18,7 @@ class Args:
 
     @staticmethod
     def parse(args):
-        a = Args()
+        a = Arguments()
         while len(args) > 1:
             if args[0] == "--gray":
                 a.gray_scale = True
@@ -64,35 +64,43 @@ def usage():
   filmgrainer [OPTION] [OPTION] ... <input-filename>
 
 Options:
+-------
   --gamma <gamma>                          Gamma compensate input, default: 1.0
   --gray                                   Grayscale mode
-  --type <type>                            Grain type: (default: 3)
-                                           1: smooth fine, 2: fine, 3: coarse, 4: coarser
-  --sat <saturation>                       Grain color saturation
-  --power <overall>,<highlights>,<shadows> Grain power: overall, for highlights and for shadows
+  --type <type>                            Grain type:
+                                           1: fine, 2: fine simple, 3: coarse, 4: coarser
+  --sat <saturation>                       Grain color saturation, 0.0 to 1.0
+  --power <overall>,<highlights>,<shadows> Grain power: overall, highlights, shadows
   --scale <ratio>                          Scaling, default 1.0. This will scale the image before
-                                           applying grain and scale back to normal size afterwards.
+                                           applying grain and scale back to normal size afterwards
+                                           for an increase in grain size
   --sharpen <passes>                       Sharpen output passes, default: 0
   --seed <number>                          Seed for grain random generator
   -o <output-filename>                     Set output filename
   -h                                       Show this help
 
-Example, for a coarse black and white look:
-  filmgrainer --gray --type 3 --power 0.8,0.2,0.1 -o output.jpg input.jpg
+Examples:
+---------
+Coarse black and white look:
+  filmgrainer --gray --type 3 --power 0.8,0.2,0.1 -o bw_neg.png input.jpg
 
-Example, for a heavily grained color negative look:
-  filmgrainer --type 4 --sat 1 --power 1,0.2,0.3 -o output.jpg input.jpg   
+Heavily grained color negative look:
+  filmgrainer --type 4 --sat 1 --power 1,0.2,0.2 -o color_neg.png input.jpg
 
-Example, for a finely grained color negative look:
-  filmgrainer --type 3 --sat 1 --power 0.8,0.2,0.1 -o output.jpg input.jpg   
+Finely grained color negative look:
+  filmgrainer --type 3 --sat 1 --power 0.7,0.2,0.2 -o color_neg_fine.png input.jpg
 
-Example, for a finely grained dias-film look:
-  filmgrainer --type 1 --sat 0.8 --power 0.6,0.1,0.1 -o output.jpg input.jpg
+Very gentle dias-film grain:
+  filmgrainer --type 1 --sat 0.5 --power 0.5,0.1,0.1 -o dias.png input.jpg
+
+Totally trashing a picture with grain:
+  filmgrainer --type 1 --gray --power 1,0.4,0.2 --scale 3 --sharpen 1 -o trashed_bw.png input.jpg
+  filmgrainer --type 1 --sat 0.7 --power 1,0.4,0.2 --scale 3 --sharpen 1 -o trashed.png input.jpg
 """)
 
 def main():
     try:
-        args = Args.parse(sys.argv[1:])
+        args = Arguments.parse(sys.argv[1:])
     except Exception as e:
         usage()
         sys.exit(-1)

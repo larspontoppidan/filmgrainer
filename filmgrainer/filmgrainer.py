@@ -9,13 +9,13 @@ import filmgrainer.graingen as graingen
 
 def _grainTypes(typ):
     if typ == 1:
-        return (0.75, 60) # smoother fine grain
+        return (0.8, 60) # more interesting fine grain
     elif typ == 2:
-        return (1, 35) # fine grain
+        return (1, 35) # basic fine grain
     elif typ == 3:
-        return (1.5, 45) # corse grain (recommended)
+        return (1.5, 45) # coarse grain
     elif typ == 4:
-        return (1.6666, 40) # corser grain
+        return (1.6666, 40) # coarser grain
     else:
         raise ValueError("Unknown grain type: " + str(typ))
 
@@ -66,8 +66,9 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
 
     print("Calculating map ...")
     map = graingamma.Map.calculate(src_gamma, grain_power, shadows, highs)
+    map.saveToFile("map.png")
 
-    print("Aquiring grain stock ...")
+    print("Calculating grain stock ...")
     (grain_size, grain_gauss) = _grainTypes(grain_type)
     mask = _getGrainMask(img_width, img_height, grain_sat, gray_scale, grain_size, grain_gauss, seed)
 
@@ -93,14 +94,11 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
             for x in range(0, img_width):
                 (mr, mg, mb) = mask_pixels[x, y]
                 (r, g, b) = img_pixels[x, y]
-                # r = map.lookup(r, m)
-                # g = map.lookup(g, m)
-                # b = map.lookup(b, m)
                 r = lookup[r, mr]
                 g = lookup[g, mg]
                 b = lookup[b, mb]
                 img_pixels[x, y] = (r, g, b)
-            
+    
     if post_scale != 1.0:
         print("Scaling image ...")
         img = img.resize((int(img_width * post_scale), int(img_height * post_scale)),

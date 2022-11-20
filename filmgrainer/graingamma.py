@@ -78,6 +78,11 @@ class Map:
     def lookup(self, pic_value, noise_value):
         return self.map[pic_value, noise_value]
 
+    def saveToFile(self, filename):
+        from PIL import Image
+        img = Image.fromarray(self.map)
+        img.save(filename)
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import numpy as np
