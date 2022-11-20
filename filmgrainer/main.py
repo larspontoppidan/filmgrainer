@@ -14,6 +14,7 @@ class Arguments:
         self.sharpen = 0
         self.src_gamma = 1.0
         self.seed = 1
+        self.file_in = None
         self.file_out = None
 
     @staticmethod
@@ -105,6 +106,9 @@ def main():
         usage()
         sys.exit(-1)
     else:
+        if args.file_out is None:
+            args.file_out = args.file_in + "-grain.png"
+
         filmgrainer.process(args.file_in, args.scale, args.src_gamma, 
             args.grain_power, args.shadows, args.highs, args.grain_type, 
             args.grain_sat, args.gray_scale, args.sharpen, args.seed, args.file_out)

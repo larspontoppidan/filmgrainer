@@ -7,7 +7,7 @@ _HighlightStart = 200
 
 def _gammaCurve(gamma, x):
     """ Returns from 0.0 to 1.0"""
-    return pow((x / 255), (1 / gamma))
+    return pow((x / 255.0), (1.0 / gamma))
 
 
 def _calcDevelopment(shadow_level, high_level, x):

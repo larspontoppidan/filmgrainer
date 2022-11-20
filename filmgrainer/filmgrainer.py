@@ -108,12 +108,6 @@ def process(file_in:str, scale:float, src_gamma:float, grain_power:float, shadow
         print("Sharpening image: %d pass ..." % sharpen)
         for x in range(sharpen):
             img = img.filter(ImageFilter.SHARPEN)
-        
-
-    if file_out is None:
-        file_out = file_in + "-grain-%d-%s-%s-%s.jpg" % (
-            grain_type, str(grain_power), str(highs), str(shadows)
-        )
 
     print("Saving: " + file_out)
     img.save(file_out, quality=97)
