@@ -8,14 +8,18 @@ import filmgrainer.graingen as graingen
 
 
 def _grainTypes(typ):
+    # After rescaling to make different grain sizes, the standard deviation
+    # of the pixel values change. The following values of grain size and power
+    # have been imperically chosen to end up with approx the same standard 
+    # deviation in the result:
     if typ == 1:
-        return (0.8, 60) # more interesting fine grain
+        return (0.8, 63) # more interesting fine grain
     elif typ == 2:
-        return (1, 35) # basic fine grain
+        return (1, 45) # basic fine grain
     elif typ == 3:
-        return (1.5, 45) # coarse grain
+        return (1.5, 50) # coarse grain
     elif typ == 4:
-        return (1.6666, 40) # coarser grain
+        return (1.6666, 50) # coarser grain
     else:
         raise ValueError("Unknown grain type: " + str(typ))
 
